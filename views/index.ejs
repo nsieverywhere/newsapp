@@ -1,0 +1,21 @@
+<%- include('partials/header'); -%>
+<div class="container">
+  <h1>Latest News</h1>
+
+  <div class="row mt-5">
+    <% for ( story of stories) { %>
+    <div class="col-lg-4">
+      <div class="card bg-info text-white storycard">
+        <div class="card-body">
+          <h5 class="card-title"><%= story.title %></h5>
+          <p class="card-text">by <%= story.by %></p>
+          <p class="card-text">Comments: <%= story.descendants %></p>
+        </div>
+      </div>
+    </div>
+
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer'); -%>

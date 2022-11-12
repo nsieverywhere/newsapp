@@ -1,0 +1,12 @@
+body{
+    background-color: rgb(243, 243, 243);
+}
+
+.storycard{
+    min-height: 10rem;
+    border-radius: 0.4rem;
+    color: rgb(39, 39, 39);
+    margin-bottom: 1rem;
+    box-shadow: 2px 2px 10px #88888873;
+    
+}
