@@ -20,49 +20,65 @@ commentdb.loadDatabase();
 
 // let kids = [];
 
+let oldresults = [];
+
 // getting data and sending to database every 5 min.
 function getData() {
   axios("https://hacker-news.firebaseio.com/v0/topstories.json")
     .then((response) => {
-      let result = response.data.slice(0, 1);
+      let results = [response.data[response.data.length - 1]];
 
-      result.forEach((id) => {
-        // axios to get the actual content from api
-        axios
-          .get("https://hacker-news.firebaseio.com/v0/item/" + id + ".json")
-          .then((response) => {
-            storydb.insert(response.data);
-            // console.log("story inserted");
-            let kids = response.data.kids;
+      // let result2 = response.data.slice(0, 100);
 
-            // code to get comments
-            kids.forEach((id) => {
-              axios
-                .get(
-                  "https://hacker-news.firebaseio.com/v0/item/" + id + ".json"
-                )
-                .then((response) => {
-                  commentdb.insert(response.data);
-                  // console.log("comment inserted");
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
+      console.log(oldresults);
+      console.log(results);
+
+      if (oldresults[0] === results[0]) {
+        console.log("they are the same");
+      } else {
+        console.log("not the same");
+        results.forEach((id) => {
+          // axios to get the actual content from api
+          axios
+            .get("https://hacker-news.firebaseio.com/v0/item/" + id + ".json")
+            .then((response) => {
+              let res = response.data;
+              storydb.insert(response.data);
+
+              console.log("story inserted");
+              let kids = response.data.kids;
+
+              // code to get comments
+              kids.forEach((id) => {
+                axios
+                  .get(
+                    "https://hacker-news.firebaseio.com/v0/item/" + id + ".json"
+                  )
+                  .then((response) => {
+                    commentdb.insert(response.data);
+                    console.log("comment inserted");
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              });
+              // -----
+            })
+            .catch((err) => {
+              console.log(err);
             });
-            // -----
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      });
+        });
+        oldresults = results;
+      }
     })
     .catch((err) => {
       console.log(err);
     });
 }
 
-const job = schedule.scheduleJob("job", "*/1 * * * *", () => {
+const job = schedule.scheduleJob("job", "*/5 * * * *", () => {
   getData();
+  // job.cancel();
   console.log("content fetched");
 });
 
