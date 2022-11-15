@@ -23,8 +23,7 @@ function getData() {
   axios("https://hacker-news.firebaseio.com/v0/topstories.json")
     .then((response) => {
       let results = [response.data[response.data.length - 1]];
-
-      // let result2 = response.data.slice(0, 100);
+      // let results = response.data.slice(0, 100);
 
       console.log(oldresults);
       console.log(results);
@@ -39,7 +38,10 @@ function getData() {
             .get("https://hacker-news.firebaseio.com/v0/item/" + id + ".json")
             .then((response) => {
               let res = response.data;
-              storydb.insert(response.data);
+              let searchtext = response.data.title.toLowerCase();
+              res.searchid = searchtext;
+
+              storydb.insert(res);
 
               console.log("story inserted");
               let kids = response.data.kids;
@@ -72,10 +74,10 @@ function getData() {
     });
 }
 
-const job = schedule.scheduleJob("job", "*/5 * * * *", () => {
+const job = schedule.scheduleJob("job", "*/5 * * * * *", () => {
   getData();
-  // job.cancel();
   console.log("content fetched");
+  // job.cancel();
 });
 
 app.get("/", async (req, res) => {
@@ -94,9 +96,10 @@ app.get("/news", (req, res) => {
 
 app.get("/search", (req, res) => {
   const searchtext = req.query.search;
-  var regexObj = new RegExp(searchtext);
+  const lowercasetext = searchtext.toLowerCase();
+  var regexObj = new RegExp(lowercasetext);
 
-  storydb.find({ title: regexObj }, function (err, storycontent) {
+  storydb.find({ searchid: regexObj }, function (err, storycontent) {
     if (err) {
       console.log(err);
     } else {
