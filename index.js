@@ -10,15 +10,11 @@ app.set("view engine", "ejs");
 app.use(bodyparser.urlencoded({ extended: true })); //important for collecting post content
 app.use(express.static("public"));
 
-let stories = [];
-
 const storydb = new Datastore("db/stories.db");
 storydb.loadDatabase();
 
 const commentdb = new Datastore("db/comment.db");
 commentdb.loadDatabase();
-
-// let kids = [];
 
 let oldresults = [];
 
@@ -94,6 +90,19 @@ app.get("/", async (req, res) => {
 
 app.get("/news", (req, res) => {
   res.render("news");
+});
+
+app.get("/search", (req, res) => {
+  const searchtext = req.query.search;
+  var regexObj = new RegExp(searchtext);
+
+  storydb.find({ title: regexObj }, function (err, storycontent) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("search", { storycontent });
+    }
+  });
 });
 
 app.get("/story/:id", (req, res) => {

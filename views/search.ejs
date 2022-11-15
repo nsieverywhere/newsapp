@@ -1,0 +1,19 @@
+<%- include('partials/header'); -%>
+<h1>Your search result</h1>
+
+<% for ( story of storycontent) { %>
+<div class="col-lg-12">
+  <div class="card bg-white text-black commentcard">
+    <div class="card-body">
+      <h5 class="card-title"><%= story.title %></h5>
+      <p class="card-text">by <%= story.by %></p>
+      <p id="pagelink">
+        Link:
+        <a href="<%= story.url %>" target="_blank"><%= story.url %></a>
+      </p>
+     
+    </div>
+  </div>
+</div>
+
+<% } %> <%- include('partials/footer'); -%>
