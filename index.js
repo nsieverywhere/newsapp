@@ -74,7 +74,7 @@ function getData() {
     });
 }
 
-const job = schedule.scheduleJob("job", "*/5 * * * * *", () => {
+const job = schedule.scheduleJob("job", "*/5 * * * *", () => {
   getData();
   console.log("content fetched");
   // job.cancel();
